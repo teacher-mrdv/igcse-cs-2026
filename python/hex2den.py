@@ -1,39 +1,3 @@
-Your update addresses the string length validation cleanly!
-
-There are two subtle bugs in the current logic to be aware of:
-
-### Key Issues to Fix
-
-1. **The ASCII Range "Gap" (`:;<=>?@`)**
-* `'0'` to `'9'` is ASCII **48 to 57**.
-* `'A'` to `'F'` is ASCII **65 to 70**.
-* The condition `ord(char) < 48 or ord(char) > 70` accidentally allows ASCII characters **58 through 64** (`:`, `;`, `<`, `=`, `>`, `?`, `@`) to pass validation. For example, typing `12:456` will be accepted as valid hex.
-* **Fix:** Use explicit range checks:
-```python
-if not (48 <= ord(char) <= 57 or 65 <= ord(char) <= 70):
-
-```
-
-
-
-
-2. **Silent Failure on Bad Length**
-* If `len(hex) < 1` or `len(hex) > 6`, the loop sets `invalid = True` and calls `continue`, but it doesn't print an error message. The prompt re-appears without telling the user what went wrong.
-* **Fix:** Add a quick `print("Error: Input must be between 1 and 6 characters.")` before `continue`.
-
-
-3. **Minor Slicing Detail**
-* `hex[4:7]` works safely because Python stops at index 5 for a 6-character string, but standard slice notation for 6 characters is `hex[4:6]` or `hex[4:]`.
-
-
-
----
-
-### Corrected Code (Keeping Your Educational ASCII Logic)
-
-If you are writing this for a CS class requirement where manual ASCII conversion is required:
-
-```python
 def hex2den(hex_str):
     total = 0
     digit1 = hex_str[0]
